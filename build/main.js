@@ -73,7 +73,8 @@ var HomePage = /** @class */ (function () {
         this.alertCtrl = alertCtrl;
         this.oneSignal = oneSignal;
         this.thisversion = 1;
-        this.me = '';
+        this.me = 0;
+        this.nick = '';
         this.hmode = 0;
         this.manager = false;
         this.feed = [];
@@ -84,11 +85,16 @@ var HomePage = /** @class */ (function () {
             picdata: '',
             id: 0
         };
+        this.reg = {
+            code: '',
+            username: ''
+        };
     }
     HomePage.prototype.ionViewDidEnter = function () {
-        this.me = window.localStorage.getItem('me');
-        if (!this.me)
-            this.me = '';
+        var tme = window.localStorage.getItem('me');
+        if (!tme)
+            tme = '0';
+        this.me = parseInt(tme);
     };
     HomePage.prototype.takepic = function () {
         var _this = this;
@@ -121,6 +127,27 @@ var HomePage = /** @class */ (function () {
             .then(function (data) {
             loading.dismiss();
             that.doComplete();
+        })
+            .catch(function (error) {
+            alert(JSON.stringify(error));
+            loading.dismiss();
+        });
+    };
+    HomePage.prototype.doRegister = function () {
+        var _this = this;
+        var that = this;
+        var loading = this.loadingCtrl.create({
+            content: 'Please wait...'
+        });
+        loading.present();
+        var url = 'https://jkur.com.au/hungry/applogin.php';
+        this.nhttp.post(url, that.reg, {})
+            .then(function (data) {
+            loading.dismiss();
+            var s = JSON.stringify(data);
+            var d = JSON.parse(s);
+            _this.me = parseInt(d.id);
+            _this.nick = d.username;
         })
             .catch(function (error) {
             alert(JSON.stringify(error));
@@ -190,7 +217,7 @@ var HomePage = /** @class */ (function () {
     };
     HomePage = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["m" /* Component */])({
-            selector: 'page-home',template:/*ion-inline-start:"/var/www/html/ionic/hungry/src/pages/home/home.html"*/'<ion-header no-border no-shadow  style="background-color:white">\n	<ion-navbar align-title="center"  style="background-color:white">\n		<ion-title style="background-color:black"><img src="./assets/imgs/hlogo.png"></ion-title>\n	</ion-navbar>\n</ion-header>\n\n<ion-content #myMenum text-center>\n		<ion-list no-lines text-wrap >\n			<ion-item *ngFor="let f of feed"  class="borderBottomGainsboroAlpha">\n<p style="font-weight:bold; margin-bottom:10px">{{ f.title }}</p>\n<p [innerHTML]="f.txt"> </p>\n</ion-item>\n</ion-list>\n<ion-item style="height:500px; min-height:500px"> &nbsp;\n</ion-item>\n</ion-content>\n\n<ion-footer style="border-top:1px solid gainsboro">\n<ion-grid no-padding>\n<ion-row text-center>\n <ion-col col-3 (click)="membership()">\n <ion-icon name="chatboxes"> </ion-icon>\n </ion-col>\n <ion-col col-3 (click)="takepic()">\n <ion-icon name="camera"> </ion-icon>\n </ion-col>\n\n <ion-col col-3 (click)="makebook()" >\n <ion-icon name="calendar"> </ion-icon>\n </ion-col>\n\n <ion-col col-3 (click)="goMarket()">\n <ion-icon name="person"> </ion-icon>\n </ion-col>\n</ion-row>\n<ion-row text-center style="min-height:30px !important">\n\n <ion-col col-3 (click)="membership()">\n Messages\n </ion-col>\n\n <ion-col col-3 (click)="takepic()">\n Photo\n </ion-col>\n\n <ion-col col-3 (click)="makebook()" >\n Booking\n </ion-col>\n\n <ion-col col-3 (click)="goMarket()" >\n Profile\n </ion-col>\n</ion-row>\n\n</ion-grid>\n</ion-footer>\n'/*ion-inline-end:"/var/www/html/ionic/hungry/src/pages/home/home.html"*/
+            selector: 'page-home',template:/*ion-inline-start:"/var/www/html/ionic/hungry/src/pages/home/home.html"*/'<ion-header no-border no-shadow  style="background-color:white">\n	<ion-navbar align-title="center"  style="background-color:white">\n		<ion-title style="background-color:black"><img src="./assets/imgs/hlogo.png"></ion-title>\n	</ion-navbar>\n</ion-header>\n\n<ion-content #myMenum text-center style="background-color:#A88C53; color:white">\n<div *ngIf="!me" style="background-color:#A88C53; color:white">\n<ion-grid>\n<ion-row>\n<ion-col>\n  <p>Welcome to the HungryCoach App</p>\n</ion-col>\n</ion-row>\n<ion-row>\n<ion-col>\n  <p>Please enter your Invitation Code and choose a User Name to continue</p><br>\n</ion-col>\n</ion-row>\n			<ion-row>\n				<ion-col>\n					<ion-list>\n						<ion-item>\n							<ion-label color="dark" floating>Invitation Code</ion-label>\n							<ion-input type="text"[(ngModel)]="reg.code" required></ion-input>\n						</ion-item>\n<ion-item style="background-color:#A88C53">\n<p>  </p>\n						</ion-item>\n\n						<ion-item>\n							<ion-label color="dark" floating>Username</ion-label>\n							<ion-input type="text"[(ngModel)]="reg.username" required></ion-input>\n						</ion-item>\n\n					\n					</ion-list>\n				</ion-col>\n			</ion-row>\n\n </ion-grid>  \n\n</div>\n<div *ngIf="me" style="background-color:#A88C53; color:white">\n		<ion-list no-lines text-wrap >\n			<ion-item *ngFor="let f of feed"  class="borderBottomGainsboroAlpha">\n<p style="font-weight:bold; margin-bottom:10px">{{ f.title }}</p>\n<p [innerHTML]="f.txt"> </p>\n</ion-item>\n</ion-list>\n<ion-item style="height:600px; min-height:600px"> &nbsp;\n</ion-item>\n</div>\n</ion-content>\n\n<ion-footer style="border-top:1px solid gainsboro" *ngIf="me">\n<ion-grid no-padding>\n<ion-row text-center>\n <ion-col col-3 (click)="membership()">\n <ion-icon name="chatboxes"> </ion-icon>\n </ion-col>\n <ion-col col-3 (click)="takepic()">\n <ion-icon name="camera"> </ion-icon>\n </ion-col>\n\n <ion-col col-3 (click)="makebook()" >\n <ion-icon name="calendar"> </ion-icon>\n </ion-col>\n\n <ion-col col-3 (click)="goMarket()">\n <ion-icon name="person"> </ion-icon>\n </ion-col>\n</ion-row>\n<ion-row text-center style="min-height:30px !important">\n\n <ion-col col-3 (click)="membership()">\n Messages\n </ion-col>\n\n <ion-col col-3 (click)="takepic()">\n Photo\n </ion-col>\n\n <ion-col col-3 (click)="makebook()" >\n Booking\n </ion-col>\n\n <ion-col col-3 (click)="goMarket()" >\n Profile\n </ion-col>\n</ion-row>\n\n</ion-grid>\n</ion-footer>\n<ion-footer *ngIf="!me">\n<button ion-button block color="dark" (click)="doRegister()">Continue</button>\n</ion-footer>\n'/*ion-inline-end:"/var/www/html/ionic/hungry/src/pages/home/home.html"*/
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* NavController */], __WEBPACK_IMPORTED_MODULE_3__angular_common_http__["a" /* HttpClient */], __WEBPACK_IMPORTED_MODULE_4__ionic_native_in_app_browser__["a" /* InAppBrowser */], __WEBPACK_IMPORTED_MODULE_5__ionic_native_camera__["a" /* Camera */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["e" /* LoadingController */], __WEBPACK_IMPORTED_MODULE_6__ionic_native_http__["a" /* HTTP */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* AlertController */], __WEBPACK_IMPORTED_MODULE_2__ionic_native_onesignal__["a" /* OneSignal */]])
     ], HomePage);

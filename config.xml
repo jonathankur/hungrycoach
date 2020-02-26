@@ -1,5 +1,5 @@
-<?xml version='1.0' encoding='utf-8'?>
-<widget id="com.hungrycoach" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+﻿<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.hungrycoach" version="0.0.2" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>HungryCoach</name>
     <description>Client Communication App</description>
     <author email="jonkur909@gmail.com" href="https://jkur.com.au/">Jonathan Kur</author>
